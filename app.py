@@ -4,30 +4,52 @@ import numpy as np
 import joblib
 
 
-# Load the trained model
+# Load trained model
 model = joblib.load('xgb_subscription_model.pkl')
 
-st.title("Bank Term Deposit Prediction App")
-st.write("Predict whether a customer will subscribe to a term deposit.")
+st.title("Bank Term Deposit Subscription Predictor")
+st.write("Use this tool to predict if a client will subscribe to a term deposit based on their details.")
 
-# Input fields
-job = st.selectbox("Job", list(range(0, 12)))  # Replace with your encoded values or a mapping
-marital = st.selectbox("Marital Status", list(range(0, 3)))
-education = st.selectbox("Education", list(range(0, 4)))
-default = st.selectbox("Default", [0, 1])
-balance = st.number_input("Balance", value=0)
-housing = st.selectbox("Housing Loan", [0, 1])
-loan = st.selectbox("Personal Loan", [0, 1])
-contact = st.selectbox("Contact Communication Type", list(range(0, 3)))
-day = st.number_input("Last Contact Day of the Month", value=15)
-month = st.selectbox("Last Contact Month", list(range(0, 12)))
-duration = st.number_input("Last Contact Duration (seconds)", value=180)
-campaign = st.number_input("Number of Contacts in this Campaign", value=1)
-previous = st.number_input("Number of Contacts Before this Campaign", value=0)
-poutcome = st.selectbox("Previous Outcome", list(range(0, 4)))
-was_previously_contacted = st.selectbox("Was Previously Contacted", [0, 1])
-age_group = st.selectbox("Age Group", list(range(0, 5)))  # e.g., 0: 18–25, 1: 26–35...
-balance_group = st.selectbox("Balance Group", list(range(0, 4)))  # e.g., 0: Low, 1: Med...
+# Mappings for categorical inputs
+job_mapping = {
+    "Admin": 0, "Blue-collar": 1, "Entrepreneur": 2, "Housemaid": 3,
+    "Management": 4, "Retired": 5, "Self-employed": 6, "Services": 7,
+    "Student": 8, "Technician": 9, "Unemployed": 10, "Unknown": 11
+}
+marital_mapping = {"Married": 0, "Single": 1, "Divorced": 2}
+education_mapping = {"Primary": 0, "Secondary": 1, "Tertiary": 2, "Unknown": 3}
+contact_mapping = {"Cellular": 0, "Telephone": 1, "Unknown": 2}
+month_mapping = {
+    "January": 0, "February": 1, "March": 2, "April": 3,
+    "May": 4, "June": 5, "July": 6, "August": 7,
+    "September": 8, "October": 9, "November": 10, "December": 11
+}
+poutcome_mapping = {"Failure": 0, "Other": 1, "Success": 2, "Unknown": 3}
+age_group_mapping = {"18–25": 0, "26–35": 1, "36–45": 2, "46–60": 3, "60+": 4}
+balance_group_mapping = {"Low": 0, "Medium": 1, "High": 2, "Very High": 3}
+
+# User inputs
+job = job_mapping[st.selectbox("Job", list(job_mapping.keys()))]
+marital = marital_mapping[st.selectbox("Marital Status", list(marital_mapping.keys()))]
+education = education_mapping[st.selectbox("Education Level", list(education_mapping.keys()))]
+default = st.selectbox("Has Credit Default?", ["No", "Yes"])
+default = 1 if default == "Yes" else 0
+balance = st.number_input("Account Balance (€)", value=0)
+housing = st.selectbox("Has Housing Loan?", ["No", "Yes"])
+housing = 1 if housing == "Yes" else 0
+loan = st.selectbox("Has Personal Loan?", ["No", "Yes"])
+loan = 1 if loan == "Yes" else 0
+contact = contact_mapping[st.selectbox("Contact Method", list(contact_mapping.keys()))]
+day = st.number_input("Last Contact Day of Month", value=15, min_value=1, max_value=31)
+month = month_mapping[st.selectbox("Last Contact Month", list(month_mapping.keys()))]
+duration = st.number_input("Contact Duration (seconds)", value=180)
+campaign = st.number_input("Campaign Contacts", value=1, min_value=1)
+previous = st.number_input("Previous Contacts", value=0)
+poutcome = poutcome_mapping[st.selectbox("Previous Campaign Outcome", list(poutcome_mapping.keys()))]
+was_previously_contacted = st.selectbox("Previously Contacted?", ["No", "Yes"])
+was_previously_contacted = 1 if was_previously_contacted == "Yes" else 0
+age_group = age_group_mapping[st.selectbox("Age Group", list(age_group_mapping.keys()))]
+balance_group = balance_group_mapping[st.selectbox("Balance Category", list(balance_group_mapping.keys()))]
 
 # Prepare input
 input_data = pd.DataFrame([[
@@ -41,7 +63,7 @@ input_data = pd.DataFrame([[
 ])
 
 # Predict
-if st.button("Predict"):
+if st.button("🔍 Predict"):
     prediction = model.predict(input_data)[0]
-    result = "Subscribed" if prediction == 1 else "Not Subscribed"
-    st.success(f"The model predicts: {result}")
+    result = "✅ Subscribed" if prediction == 1 else "❌ Not Subscribed"
+    st.success ​:contentReference[oaicite:0]{index=0}​
