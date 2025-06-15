@@ -8,7 +8,7 @@ warnings.filterwarnings('ignore')
 # Load trained model
 model = joblib.load('xgb_subscription_model.pkl')
 
-st.title("📊 Bank Marketing Subscription Predictor")
+st.title("📊💵 Bank Term Deposit Subscription Predictor")
 st.write("Predict whether a customer will subscribe to a term deposit based on their profile.")
 
 # --- Human-readable option mappings ---
