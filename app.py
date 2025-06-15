@@ -7,7 +7,7 @@ import joblib
 # Load the trained model
 model = joblib.load('xgb_subscription_model.pkl')
 
-st.title("Bank Marketing Prediction App")
+st.title("Bank Term Deposit Prediction App")
 st.write("Predict whether a customer will subscribe to a term deposit.")
 
 # Input fields
