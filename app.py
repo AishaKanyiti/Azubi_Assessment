@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-import warnings
-warnings.filterwarnings('ignore')
 
 # Load the trained model
 model = joblib.load('xgb_subscription_model.pkl')
