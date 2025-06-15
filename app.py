@@ -1,9 +1,7 @@
-streamlit
-pandas
-numpy
-scikit-learn
-xgboost
-joblib
+import streamlit as st
+import pandas as pd
+import numpy as np
+import joblib
 
 
 # Load the trained model
