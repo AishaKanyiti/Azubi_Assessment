@@ -2,69 +2,91 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-
+import warnings
+warnings.filterwarnings('ignore')
 
 # Load trained model
 model = joblib.load('xgb_subscription_model.pkl')
 
-st.title("Bank Term Deposit Subscription Predictor")
-st.write("Use this tool to predict if a client will subscribe to a term deposit based on their details.")
+st.title("📊 Bank Marketing Subscription Predictor")
+st.write("Predict whether a customer will subscribe to a term deposit based on their profile.")
 
-# Mappings for categorical inputs
-job_mapping = {
+# --- Human-readable option mappings ---
+job_options = {
     "Admin": 0, "Blue-collar": 1, "Entrepreneur": 2, "Housemaid": 3,
     "Management": 4, "Retired": 5, "Self-employed": 6, "Services": 7,
     "Student": 8, "Technician": 9, "Unemployed": 10, "Unknown": 11
 }
-marital_mapping = {"Married": 0, "Single": 1, "Divorced": 2}
-education_mapping = {"Primary": 0, "Secondary": 1, "Tertiary": 2, "Unknown": 3}
-contact_mapping = {"Cellular": 0, "Telephone": 1, "Unknown": 2}
-month_mapping = {
+
+marital_options = {"Married": 0, "Single": 1, "Divorced": 2}
+
+education_options = {"Primary": 0, "Secondary": 1, "Tertiary": 2, "Unknown": 3}
+
+contact_options = {"Cellular": 0, "Telephone": 1, "Unknown": 2}
+
+poutcome_options = {"Failure": 0, "Other": 1, "Success": 2, "Unknown": 3}
+
+age_group_options = {
+    "18–25": 0, "26–35": 1, "36–45": 2, "46–60": 3, "60+": 4
+}
+
+balance_group_options = {
+    "Low": 0, "Medium": 1, "High": 2, "Very High": 3
+}
+
+month_options = {
     "January": 0, "February": 1, "March": 2, "April": 3,
     "May": 4, "June": 5, "July": 6, "August": 7,
     "September": 8, "October": 9, "November": 10, "December": 11
 }
-poutcome_mapping = {"Failure": 0, "Other": 1, "Success": 2, "Unknown": 3}
-age_group_mapping = {"18–25": 0, "26–35": 1, "36–45": 2, "46–60": 3, "60+": 4}
-balance_group_mapping = {"Low": 0, "Medium": 1, "High": 2, "Very High": 3}
 
-# User inputs
-job = job_mapping[st.selectbox("Job", list(job_mapping.keys()))]
-marital = marital_mapping[st.selectbox("Marital Status", list(marital_mapping.keys()))]
-education = education_mapping[st.selectbox("Education Level", list(education_mapping.keys()))]
-default = st.selectbox("Has Credit Default?", ["No", "Yes"])
-default = 1 if default == "Yes" else 0
-balance = st.number_input("Account Balance (€)", value=0)
+# --- Input fields ---
+job = st.selectbox("Job", job_options.keys())
+marital = st.selectbox("Marital Status", marital_options.keys())
+education = st.selectbox("Education Level", education_options.keys())
+default = st.selectbox("Has Credit in Default?", ["No", "Yes"])
+balance = st.number_input("Account Balance", value=0)
 housing = st.selectbox("Has Housing Loan?", ["No", "Yes"])
-housing = 1 if housing == "Yes" else 0
 loan = st.selectbox("Has Personal Loan?", ["No", "Yes"])
-loan = 1 if loan == "Yes" else 0
-contact = contact_mapping[st.selectbox("Contact Method", list(contact_mapping.keys()))]
-day = st.number_input("Last Contact Day of Month", value=15, min_value=1, max_value=31)
-month = month_mapping[st.selectbox("Last Contact Month", list(month_mapping.keys()))]
-duration = st.number_input("Contact Duration (seconds)", value=180)
-campaign = st.number_input("Campaign Contacts", value=1, min_value=1)
-previous = st.number_input("Previous Contacts", value=0)
-poutcome = poutcome_mapping[st.selectbox("Previous Campaign Outcome", list(poutcome_mapping.keys()))]
-was_previously_contacted = st.selectbox("Previously Contacted?", ["No", "Yes"])
-was_previously_contacted = 1 if was_previously_contacted == "Yes" else 0
-age_group = age_group_mapping[st.selectbox("Age Group", list(age_group_mapping.keys()))]
-balance_group = balance_group_mapping[st.selectbox("Balance Category", list(balance_group_mapping.keys()))]
+contact = st.selectbox("Contact Communication Type", contact_options.keys())
+day = st.number_input("Last Contact Day of the Month", min_value=1, max_value=31, value=15)
+month = st.selectbox("Last Contact Month", month_options.keys())
+duration = st.number_input("Last Contact Duration (seconds)", value=180)
+campaign = st.number_input("Number of Contacts in This Campaign", value=1)
+previous = st.number_input("Number of Previous Contacts", value=0)
+poutcome = st.selectbox("Previous Marketing Outcome", poutcome_options.keys())
+was_previously_contacted = st.selectbox("Was Previously Contacted?", ["No", "Yes"])
+age_group = st.selectbox("Age Group", age_group_options.keys())
+balance_group = st.selectbox("Balance Category", balance_group_options.keys())
 
-# Prepare input
+# --- Encode input values ---
 input_data = pd.DataFrame([[
-    job, marital, education, default, balance, housing, loan, contact,
-    day, month, duration, campaign, previous, poutcome,
-    was_previously_contacted, age_group, balance_group
+    job_options[job],
+    marital_options[marital],
+    education_options[education],
+    1 if default == "Yes" else 0,
+    balance,
+    1 if housing == "Yes" else 0,
+    1 if loan == "Yes" else 0,
+    contact_options[contact],
+    day,
+    month_options[month],
+    duration,
+    campaign,
+    previous,
+    poutcome_options[poutcome],
+    1 if was_previously_contacted == "Yes" else 0,
+    age_group_options[age_group],
+    balance_group_options[balance_group]
 ]], columns=[
     'job', 'marital', 'education', 'default', 'balance', 'housing',
-    'loan', 'contact', 'day', 'month', 'duration', 'campaign', 'previous',
-    'poutcome', 'was_previously_contacted', 'age_group', 'balance_group'
+    'loan', 'contact', 'day', 'month', 'duration', 'campaign',
+    'previous', 'poutcome', 'was_previously_contacted',
+    'age_group', 'balance_group'
 ])
 
-# Predict
-if st.button("🔍 Predict"):
+# --- Predict and show result ---
+if st.button("Predict"):
     prediction = model.predict(input_data)[0]
     result = "✅ Subscribed" if prediction == 1 else "❌ Not Subscribed"
-   st.success(f"The model predicts: {result}")
- 
+    st.success(f"The model predicts: {result}")
