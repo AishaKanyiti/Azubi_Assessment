@@ -66,4 +66,5 @@ input_data = pd.DataFrame([[
 if st.button("🔍 Predict"):
     prediction = model.predict(input_data)[0]
     result = "✅ Subscribed" if prediction == 1 else "❌ Not Subscribed"
-    st.success ​:contentReference[oaicite:0]{index=0}​
+   st.success(f"The model predicts: {result}")
+ 
