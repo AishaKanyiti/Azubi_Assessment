@@ -1,7 +1,10 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import joblib
+streamlit
+pandas
+numpy
+scikit-learn
+xgboost
+joblib
+
 
 # Load the trained model
 model = joblib.load('xgb_subscription_model.pkl')
