@@ -49,7 +49,6 @@ balance = st.number_input("Account Balance", value=0)
 housing = st.selectbox("Has Housing Loan?", ["No", "Yes"])
 loan = st.selectbox("Has Personal Loan?", ["No", "Yes"])
 contact = st.selectbox("Contact Communication Type", contact_options.keys())
-day = st.number_input("Last Contact Day of the Month", min_value=1, max_value=31, value=15)
 month = st.selectbox("Last Contact Month", month_options.keys())
 duration = st.number_input("Last Contact Duration (seconds)", value=180)
 campaign = st.number_input("Number of Contacts in This Campaign", value=1)
@@ -69,7 +68,6 @@ input_data = pd.DataFrame([[
     1 if housing == "Yes" else 0,
     1 if loan == "Yes" else 0,
     contact_options[contact],
-    day,
     month_options[month],
     duration,
     campaign,
@@ -80,7 +78,7 @@ input_data = pd.DataFrame([[
     balance_group_options[balance_group]
 ]], columns=[
     'job', 'marital', 'education', 'default', 'balance', 'housing',
-    'loan', 'contact', 'day', 'month', 'duration', 'campaign',
+    'loan', 'contact', 'month', 'duration', 'campaign',
     'previous', 'poutcome', 'was_previously_contacted',
     'age_group', 'balance_group'
 ])
